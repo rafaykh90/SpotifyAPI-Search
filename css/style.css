@@ -1,0 +1,13 @@
+.row{
+	margin-top:3%;
+}
+.thumbnail{
+	padding-top: 0.5cm;      
+	height : 45%;
+}
+
+.pagingElements{
+	float: left;
+	display: none;
+	margin: 5px;
+}
