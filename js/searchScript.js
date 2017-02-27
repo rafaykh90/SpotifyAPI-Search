@@ -41,14 +41,12 @@ $(document).ready(function(){
       //GET call 
       $.get( url, function( data ) {
         //if response from api is not undefined (means, if we got results)
-        console.log(data.albums.items.length);
         if(typeof(data.albums.items)!="undefined"){
 
           //loop over response (get each data item)
           for (var i = 0; i < data.albums.items.length; i++) {
 
           var item = data.albums.items[i];
-          console.log(item.artists.length);
           if(item.artists.length>1){
             var names="";
             for(var j=0; j<item.artists.length;j++){
@@ -68,9 +66,10 @@ $(document).ready(function(){
             var image = "http://www.bookmysports.com/angular/assets/images/no_image.jpg";
           }
 
+          var imgNum = i + offset;
           //create new html elements and append it to div albums to display the resutls
-          $('#albums').append('<div class="col-sm-6 col-md-3"><div class="thumbnail"><a role="button" data-toggle="modal" data-target="#myModal'+i+'"><img style="width:150px; height:150px;" src="'+image+'" class="img-responsive"></a><div class="caption"><h6 class="text-center"><b>'+title+'</b></h6><p class="text-center">'+names+'</p></div></div>');
-          $('#modeldiv').append('<div class="modal fade" id="myModal'+i+'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="myModalLabel">Image</h4></div><div class="modal-body"><img class="img-responsive" src="'+item.images[0].url+'"/></div></div></div></div>');
+          $('#albums').append('<div class="col-sm-6 col-md-3"><div class="thumbnail"><a role="button" data-toggle="modal" data-target="#myModal'+imgNum+'"><img style="width:150px; height:150px;" src="'+image+'" class="img-responsive"></a><div class="caption"><h6 class="text-center"><b>'+title+'</b></h6><p class="text-center">'+names+'</p></div></div>');
+          $('#modeldiv').append('<div class="modal fade" id="myModal'+imgNum+'" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="myModalLabel">Image</h4></div><div class="modal-body"><img class="img-responsive" src="'+item.images[0].url+'"/></div></div></div></div>');
         }
 
         //Code For Paging Elements in the Html
