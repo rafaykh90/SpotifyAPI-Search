@@ -1,10 +1,12 @@
 var limit = 12;
 var offset = 0;
 var pageNum = 1;
+var sortingType = "";
 $(document).ready(function(){
     $("#search").on('click',function(e){
       //Clear screen with old results if any
       document.getElementById("albums").innerHTML ="";
+      document.getElementById("modeldiv").innerHTML ="";
       loadPage();
       e.preventDefault();
   });
@@ -23,6 +25,7 @@ $(document).ready(function(){
       pageNum++;
       offset+=limit;
       document.getElementById("albums").innerHTML ="";
+      document.getElementById("modeldiv").innerHTML ="";
       loadPage();
     }
 
@@ -30,7 +33,38 @@ $(document).ready(function(){
       pageNum--;
       offset-=limit;
       document.getElementById("albums").innerHTML ="";
+      document.getElementById("modeldiv").innerHTML ="";
       loadPage();
+    }
+
+   document.getElementById("sortselect").onchange = function(e){
+   	document.getElementById("albums").innerHTML ="";
+   	document.getElementById("modeldiv").innerHTML ="";
+    	sortingType = document.getElementById("sortselect").value;
+    	loadPage();
+    }
+
+    function sortByAlbumName(itemsData, desc){
+    	var sortedObjs = itemsData.sort(function(a, b){
+        	var nameA = a.name.toLowerCase(), nameB = b.name.toLowerCase()
+        	return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+        });
+        if(desc)
+                return sortedObjs.reverse();
+            return sortedObjs;
+    }
+
+    function sortByArtistName(itemsData, desc){
+	    var sortedObjs = itemsData.sort(function(a, b){
+	        	var nameA = a.artists[0].name.toLowerCase(), nameB = b.artists[0].name.toLowerCase()
+	        	return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+	        });
+
+	    console.log(sortedObjs);
+
+	    if(desc)
+	    	return sortedObjs.reverse();
+	    return sortedObjs;	
     }
 
     function loadPage(){
@@ -42,16 +76,22 @@ $(document).ready(function(){
       $.get( url, function( data ) {
         //if response from api is not undefined (means, if we got results)
         if(typeof(data.albums.items)!="undefined"){
-
+        	if(sortingType == "byAlbum")
+        		var sortedObjs = sortByAlbumName(data.albums.items, false);
+        	else if (sortingType == "byArtist")
+        		var sortedObjs = sortByArtistName(data.albums.items, false);
+        	else
+        		var sortedObjs = data.albums.items;
           //loop over response (get each data item)
-          for (var i = 0; i < data.albums.items.length; i++) {
+          for (var i = 0; i < sortedObjs.length; i++) {
 
-          var item = data.albums.items[i];
+          var item = sortedObjs[i];
           if(item.artists.length>1){
             var names="";
             for(var j=0; j<item.artists.length;j++){
               names=names+item.artists[j].name+", ";
             }
+            names = names.substring(0, names.length-2);
           }
           else{
             names = item.artists[0].name;
@@ -74,6 +114,7 @@ $(document).ready(function(){
 
         //Code For Paging Elements in the Html
         document.getElementById("pageText").style.display = "inline";
+        document.getElementById("sortselect").style.display = "inline";
         document.getElementById("pageText").innerHTML = "Page# " + pageNum;
         document.getElementById("nextbtn").style.display="inline";
         if(pageNum > 1){
